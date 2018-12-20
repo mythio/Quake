@@ -1,9 +1,6 @@
 package com.example.mythio.quake;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +15,7 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
 
     private Context context;
     private List<Earthquake> earthquakes;
+    private OnItemClick listener;
 
     public EarthquakeAdapter(Context context, List<Earthquake> earthquakes) {
         this.context = context;
@@ -97,6 +95,26 @@ public class EarthquakeAdapter extends RecyclerView.Adapter<EarthquakeAdapter.Ea
             mTextViewLocation = itemView.findViewById(R.id.text_view_location);
             mTextViewDate = itemView.findViewById(R.id.text_view_date);
             mTextViewTime = itemView.findViewById(R.id.text_view_time);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int i = getAdapterPosition();
+                    if (listener != null && i != RecyclerView.NO_POSITION) {
+                        listener.onItemClick(earthquakes.get(i));
+                    }
+                }
+            });
+
         }
     }
+
+    public interface OnItemClick {
+        void onItemClick(Earthquake earthquake);
+    }
+
+    public void setOnItemClickListener(OnItemClick listener) {
+        this.listener = listener;
+    }
+
 }

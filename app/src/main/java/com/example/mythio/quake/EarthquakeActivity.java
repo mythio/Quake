@@ -1,5 +1,7 @@
 package com.example.mythio.quake;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.nfc.tech.TagTechnology;
 import android.os.Bundle;
@@ -46,7 +48,7 @@ public class EarthquakeActivity extends AppCompatActivity {
     }
 
     private void parse() {
-        String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-12-10&endtime=2018-12-20&minmagnitude=4.5";
+        final String url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=2018-12-10&endtime=2018-12-20&minmagnitude=4.5";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -83,11 +85,22 @@ public class EarthquakeActivity extends AppCompatActivity {
                                         locationOffset,
                                         location,
                                         dateVal,
-                                        timeVal
+                                        timeVal,
+                                        object.getString("detail")
                                 ));
                             }
                             EarthquakeAdapter adapter = new EarthquakeAdapter(getApplicationContext(), earthquakes);
                             earthquakeListView.setAdapter(adapter);
+
+                            adapter.setOnItemClickListener(new EarthquakeAdapter.OnItemClick() {
+                                @Override
+                                public void onItemClick(Earthquake earthquake) {
+                                    Uri earthquakeUri = Uri.parse(earthquake.getmUrl());
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, earthquakeUri);
+                                    startActivity(intent);
+                                }
+                            });
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
